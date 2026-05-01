@@ -13,7 +13,9 @@ const publicRoutes = require("./routes/publicRoutes");
 
 loadEnvironment();
 
+// 🔥 UPDATED allowed origins
 const allowedOrigins = [
+  "https://main.d2w4z2imaqhfza.amplifyapp.com", // ✅ frontend (IMPORTANT)
   "http://localhost:3000",
   "http://localhost:3001",
   "http://127.0.0.1:3000",
@@ -31,13 +33,13 @@ function isAllowedOrigin(origin) {
 function createServer() {
   const app = express();
   const server = http.createServer(app);
+
   const io = new Server(server, {
     cors: {
       origin(origin, callback) {
         if (isAllowedOrigin(origin)) {
           return callback(null, true);
         }
-
         return callback(new Error("CORS origin not allowed"));
       },
     },
@@ -45,17 +47,19 @@ function createServer() {
 
   app.set("io", io);
 
+  // 🔥 CORS middleware (IMPORTANT)
   app.use(
     cors({
       origin(origin, callback) {
         if (isAllowedOrigin(origin)) {
           return callback(null, true);
         }
-
         return callback(new Error("CORS origin not allowed"));
       },
+      credentials: true,
     })
   );
+
   app.use(express.json());
   app.use(requestLogger);
   app.use(createRateLimiter({ windowMs: 15 * 60 * 1000, maxRequests: 200 }));
