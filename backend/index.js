@@ -1,7 +1,7 @@
 const { createServer } = require("./src/app");
 const { connectDatabase } = require("./src/config/database");
 const { logger } = require("./src/utils/logger");
-
+const cors = require("cors");
 async function start() {
   const PORT = Number(process.env.PORT) || 5000;
 
